@@ -1,4 +1,5 @@
-import { useSelector } from '../../services/store';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../services/store';
 
 import styles from './constructor-page.module.css';
 
@@ -8,8 +9,10 @@ import { Preloader } from '../../components/ui';
 import { FC } from 'react';
 
 export const ConstructorPage: FC = () => {
-  /** TODO: взять переменную из стора */
-  const isIngredientsLoading = false;
+  // Берём данные о загрузке из Redux
+  const isIngredientsLoading = useSelector(
+    (state: RootState) => state.ingredients.isLoading
+  );
 
   return (
     <>
