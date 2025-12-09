@@ -15,9 +15,9 @@ import {
 
 import { AppHeader, Modal, IngredientDetails, OrderInfo } from '@components';
 
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../services/store';
-
+import { useAppSelector, useAppDispatch } from '../../services/hooks';
+import type { RootState } from '../../services/store';
+import { clearOrder } from '../../services/orderSlice';
 import { fetchIngredients } from '../../services/ingredientsSlice';
 import { ProtectedRoute } from '../protected-route/protected-route';
 import { getUser } from '../../services/userSlice';
@@ -32,9 +32,9 @@ const App = () => {
   const state = location.state as { backgroundLocation?: Location };
 
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const isUserLoaded = useSelector(
+  const isUserLoaded = useAppSelector(
     (state: RootState) => state.user.isUserLoaded
   );
 
@@ -109,7 +109,13 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Информация о заказе' onClose={handleClose}>
+              <Modal
+                title='Информация о заказе'
+                onClose={() => {
+                  dispatch(clearOrder()); // ← очищаем Redux.order
+                  handleClose(); // ← стандартное закрытие модалки
+                }}
+              >
                 <OrderInfo />
               </Modal>
             }
@@ -129,7 +135,13 @@ const App = () => {
             element={
               <ProtectedRoute
                 element={
-                  <Modal title='Информация о заказе' onClose={handleClose}>
+                  <Modal
+                    title='Информация о заказе'
+                    onClose={() => {
+                      dispatch(clearOrder()); // ← очищаем Redux.order
+                      handleClose(); // ← стандартное закрытие модалки
+                    }}
+                  >
                     <OrderInfo />
                   </Modal>
                 }

@@ -1,14 +1,14 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../services/store';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
+import type { RootState } from '../../services/store';
 import { updateUser } from '../../services/userSlice';
 import { logoutUser } from '../../services/userSlice';
 import { useNavigate } from 'react-router-dom';
 export const Profile: FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user.data);
+  const user = useAppSelector((state: RootState) => state.user.data);
   const handleLogout = async () => {
     await dispatch(logoutUser());
     navigate('/login', { replace: true });

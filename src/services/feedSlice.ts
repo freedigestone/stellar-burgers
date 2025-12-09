@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TOrder } from '../utils/types';
+import { TOrder, TOrdersData } from '../utils/types';
 
 interface FeedState {
   orders: TOrder[];
@@ -25,7 +25,7 @@ const feedSlice = createSlice({
     wsDisconnect(state) {
       state.isConnected = false;
     },
-    wsMessage(state, action: PayloadAction<any>) {
+    wsMessage(state, action: PayloadAction<TOrdersData>) {
       state.orders = action.payload.orders;
       state.total = action.payload.total;
       state.totalToday = action.payload.totalToday;

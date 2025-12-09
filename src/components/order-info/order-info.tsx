@@ -1,6 +1,6 @@
 import { FC, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { RootState, AppDispatch } from '../../services/store';
@@ -9,10 +9,12 @@ import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const orderData = useSelector((state: RootState) => state.order.order);
-  const ingredients = useSelector((state: RootState) => state.ingredients.data);
+  const orderData = useAppSelector((state: RootState) => state.order.order);
+  const ingredients = useAppSelector(
+    (state: RootState) => state.ingredients.data
+  );
 
   // Хук ВСЕГДА вызывается
   const orderInfo = useMemo(() => {

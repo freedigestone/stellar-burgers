@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TIngredient } from '../utils/types';
+import { createOrder } from './orderSlice';
 
 interface ConstructorState {
   bun: TIngredient | null;
@@ -44,6 +45,12 @@ const burgerConstructorSlice = createSlice({
       state.bun = null;
       state.ingredients = [];
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(
+      createOrder.fulfilled,
+      () => initialState // ← корректно очищает конструктор
+    );
   }
 });
 

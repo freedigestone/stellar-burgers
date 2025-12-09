@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import {
   wsProfileConnect,
   wsProfileDisconnect
@@ -8,9 +8,9 @@ import type { AppDispatch, RootState } from '../../services/store';
 import { ProfileOrdersUI } from '@ui-pages';
 
 export const ProfileOrders = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const { orders } = useSelector((state: RootState) => state.orderHistory);
+  const { orders } = useAppSelector((state: RootState) => state.orderHistory);
 
   useEffect(() => {
     const token = document.cookie

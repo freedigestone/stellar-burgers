@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { RootState, AppDispatch } from '../../services/store';
 import { wsConnect, wsDisconnect } from '../../services/feedSlice';
 import { FeedUI } from '@ui-pages';
 import { Preloader } from '@ui';
 
 export const Feed = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const orders = useSelector((state: RootState) => state.feed.orders);
+  const dispatch = useAppDispatch();
+  const orders = useAppSelector((state: RootState) => state.feed.orders);
 
   useEffect(() => {
     dispatch(wsConnect());

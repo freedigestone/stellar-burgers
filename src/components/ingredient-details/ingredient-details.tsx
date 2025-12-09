@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../services/hooks';
 
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
@@ -9,7 +9,9 @@ import type { TIngredient } from '../../utils/types';
 
 export const IngredientDetails: FC = () => {
   const { id } = useParams();
-  const ingredients = useSelector((state: RootState) => state.ingredients.data);
+  const ingredients = useAppSelector(
+    (state: RootState) => state.ingredients.data
+  );
 
   // Если ингредиенты еще загружаются — показываем лоадер
   if (!ingredients.length) return <Preloader />;

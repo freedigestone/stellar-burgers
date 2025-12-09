@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAction } from '@reduxjs/toolkit';
+import { TOrdersData } from '../utils/types';
 
 export type TOrder = {
   _id: string;
@@ -69,7 +70,7 @@ const orderHistorySlice = createSlice({
 });
 export const wsProfileConnect = createAction<string>('wsProfileConnect');
 export const wsProfileDisconnect = createAction('wsProfileDisconnect');
-export const wsProfileMessage = createAction<any>('wsProfileMessage');
+export const wsProfileMessage = createAction<TOrdersData>('wsProfileMessage');
 
 export const {
   wsConnectionStart,

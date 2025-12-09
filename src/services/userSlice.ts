@@ -28,15 +28,13 @@ export const loginUser = createAsyncThunk(
   'user/login',
   async (form: { email: string; password: string }) => {
     const res = await loginUserApi(form);
-    // loginUserApi возвращает TAuthResponse:
-    // { success, user, accessToken, refreshToken, message? }
-    return {
-      user: res.user,
-      tokens: {
-        accessToken: res.accessToken,
-        refreshToken: res.refreshToken
-      }
-    };
+
+    // побочки выполняем тут
+    const access = res.accessToken.split('Bearer ')[1];
+    setCookie('accessToken', access);
+    localStorage.setItem('refreshToken', res.refreshToken);
+
+    return { user: res.user };
   }
 );
 
@@ -50,22 +48,23 @@ export const registerUser = createAsyncThunk(
       return thunkAPI.rejectWithValue(res.message);
     }
 
-    return {
-      user: res.user,
-      tokens: {
-        accessToken: res.accessToken,
-        refreshToken: res.refreshToken
-      }
-    };
+    // побочные эффекты — только в thunk
+    const access = res.accessToken.split('Bearer ')[1];
+    setCookie('accessToken', access);
+    localStorage.setItem('refreshToken', res.refreshToken);
+
+    return { user: res.user };
   }
 );
 
 // ---------- LOGOUT ----------
 export const logoutUser = createAsyncThunk('user/logout', async () => {
   await logoutApi();
-  // очищаем токены
-  localStorage.removeItem('refreshToken');
+
+  // удаляем токены ТУТ
   setCookie('accessToken', '', { expires: -1 });
+  localStorage.removeItem('refreshToken');
+
   return null;
 });
 
@@ -103,10 +102,6 @@ const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.data = action.payload.user;
-
-        const { accessToken, refreshToken } = action.payload.tokens;
-        setCookie('accessToken', accessToken.split('Bearer ')[1]);
-        localStorage.setItem('refreshToken', refreshToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -122,10 +117,6 @@ const userSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.data = action.payload.user;
-
-        const { accessToken, refreshToken } = action.payload.tokens;
-        setCookie('accessToken', accessToken.split('Bearer ')[1]);
-        localStorage.setItem('refreshToken', refreshToken);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;

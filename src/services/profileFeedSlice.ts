@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TOrder } from '../utils/types';
+import { TOrder, TOrdersData } from '../utils/types';
 
 interface ProfileFeedState {
   orders: TOrder[];
@@ -22,7 +22,7 @@ const profileFeedSlice = createSlice({
       state.isConnected = false;
       state.orders = [];
     },
-    wsMessageProfile(state, action: PayloadAction<any>) {
+    wsMessageProfile(state, action: PayloadAction<TOrdersData>) {
       state.orders = action.payload.orders;
     }
   }

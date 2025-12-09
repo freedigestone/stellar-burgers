@@ -1,15 +1,15 @@
 import { FC, SyntheticEvent, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { RegisterUI } from '@ui-pages';
 import { registerUser } from '../../services/userSlice';
-import type { AppDispatch, RootState } from '../../services/store';
+import type { RootState } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 
 export const Register: FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const error = useSelector((state: RootState) => state.user.error);
+  const error = useAppSelector((state: RootState) => state.user.error);
 
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');

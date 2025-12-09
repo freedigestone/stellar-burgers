@@ -1,18 +1,17 @@
 import { useState, useRef, useEffect, FC } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../services/hooks';
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 import { RootState } from '../../services/store';
 import { TIngredient } from '../../utils/types';
-import { ConstructorState } from '../../services/burgerConstructorSlice';
+
+import { selectIngredients } from '../../services/ingredientsSlice';
 export const BurgerIngredients: FC = () => {
-  const ingredients = useSelector((state: RootState) => state.ingredients.data);
-  const constructorBurger = useSelector(
-    (state: RootState) => state.burgerConstructor
-  );
-  const bun = useSelector((state: RootState) => state.burgerConstructor.bun);
-  const constructorIngredients = useSelector(
+  const ingredients = useAppSelector(selectIngredients);
+
+  const bun = useAppSelector((state: RootState) => state.burgerConstructor.bun);
+  const constructorIngredients = useAppSelector(
     (state: RootState) => state.burgerConstructor.ingredients
   );
   const buns = ingredients.filter((item: TIngredient) => item.type === 'bun');

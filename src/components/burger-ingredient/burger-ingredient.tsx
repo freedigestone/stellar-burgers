@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../../services/hooks';
 
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
@@ -8,7 +8,7 @@ import { setBun, addIngredient } from '../../services/burgerConstructorSlice';
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
   ({ ingredient, count }) => {
     const location = useLocation();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const handleAdd = () => {
       if (ingredient.type === 'bun') {
