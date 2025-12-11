@@ -38,3 +38,19 @@ export type TUser = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export type ForgotPasswordUIProps = {
+  email: string;
+  setEmail: (val: string) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  errorText: string | null;
+};
+
+export type ResetPasswordUIProps = {
+  password: string;
+  setPassword: (val: string) => void;
+  code: string;
+  setCode: (val: string) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  errorText: string | null;
+};

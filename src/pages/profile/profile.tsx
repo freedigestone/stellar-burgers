@@ -1,38 +1,69 @@
 import { ProfileUI } from '@ui-pages';
-import { FC, SyntheticEvent, useEffect, useState } from 'react';
-
+import { FC, SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
+import type { RootState } from '../../services/store';
+import { updateUser } from '../../services/userSlice';
+import { logoutUser } from '../../services/userSlice';
+import { useNavigate } from 'react-router-dom';
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const user = useAppSelector((state: RootState) => state.user.data);
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+    navigate('/login', { replace: true });
   };
-
   const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
+    name: user?.name ?? '',
+    email: user?.email ?? '',
     password: ''
   });
 
+  // когда пользователь загрузился / изменился — обновляем форму
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    if (user) {
+      setFormValue((prev) => ({
+        ...prev,
+        name: user.name,
+        email: user.email
+      }));
+    }
   }, [user]);
 
-  const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
-    !!formValue.password;
+  const isFormChanged = useMemo(() => {
+    if (!user) return false;
+
+    return (
+      formValue.name !== user.name ||
+      formValue.email !== user.email ||
+      formValue.password.length > 0
+    );
+  }, [formValue, user]);
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!user) return;
+
+    const payload: { name: string; email: string; password?: string } = {
+      name: formValue.name,
+      email: formValue.email
+    };
+
+    if (formValue.password) {
+      payload.password = formValue.password;
+    }
+
+    dispatch(updateUser(payload));
+
+    setFormValue((prev) => ({
+      ...prev,
+      password: ''
+    }));
   };
 
-  const handleCancel = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const handleCancel = () => {
+    if (!user) return;
+
     setFormValue({
       name: user.name,
       email: user.email,
@@ -56,6 +87,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };

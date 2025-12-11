@@ -1,23 +1,22 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
+import { RootState, AppDispatch } from '../../services/store';
+import { fetchOrderByNumber } from '../../services/orderSlice';
 import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams();
+  const dispatch = useAppDispatch();
 
-  const ingredients: TIngredient[] = [];
+  const orderData = useAppSelector((state: RootState) => state.order.order);
+  const ingredients = useAppSelector(
+    (state: RootState) => state.ingredients.data
+  );
 
-  /* Готовим данные для отображения */
+  // Хук ВСЕГДА вызывается
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -28,40 +27,38 @@ export const OrderInfo: FC = () => {
     };
 
     const ingredientsInfo = orderData.ingredients.reduce(
-      (acc: TIngredientsWithCount, item) => {
-        if (!acc[item]) {
-          const ingredient = ingredients.find((ing) => ing._id === item);
-          if (ingredient) {
-            acc[item] = {
-              ...ingredient,
-              count: 1
-            };
-          }
-        } else {
-          acc[item].count++;
-        }
+      (acc: TIngredientsWithCount, id) => {
+        const ingredient = ingredients.find((ing) => ing._id === id);
 
+        if (ingredient) {
+          if (!acc[id]) acc[id] = { ...ingredient, count: 1 };
+          else acc[id].count++;
+        }
         return acc;
       },
       {}
     );
 
     const total = Object.values(ingredientsInfo).reduce(
-      (acc, item) => acc + item.price * item.count,
+      (acc, i) => acc + i.price * i.count,
       0
     );
 
     return {
       ...orderData,
       ingredientsInfo,
-      date,
-      total
+      total,
+      date
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
-    return <Preloader />;
-  }
+  // Загружаем заказ
+  useEffect(() => {
+    if (number) dispatch(fetchOrderByNumber(Number(number)));
+  }, [number, dispatch]);
+
+  // Теперь можно безопасно рендерить
+  if (!orderInfo) return <Preloader />;
 
   return <OrderInfoUI orderInfo={orderInfo} />;
 };
