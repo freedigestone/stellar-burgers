@@ -1,49 +1,54 @@
 import reducer, { fetchIngredients } from '../ingredientsSlice';
 import { TIngredient } from '../../utils/types';
 
-type IngredientsState = ReturnType<typeof reducer>;
-
-describe('ingredientsSlice async flow', () => {
-  const ingredients: TIngredient[] = [
+describe('ingredientsSlice — async actions', () => {
+  const mockIngredients: TIngredient[] = [
     {
       _id: '1',
-      name: 'Булка',
+      name: 'Краторная булка',
       type: 'bun',
-      proteins: 1,
-      fat: 2,
-      carbohydrates: 3,
-      calories: 4,
-      price: 5,
-      image: 'img',
-      image_mobile: 'img',
-      image_large: 'img'
+      proteins: 80,
+      fat: 24,
+      carbohydrates: 53,
+      calories: 420,
+      price: 1255,
+      image: 'image',
+      image_mobile: 'image_mobile',
+      image_large: 'image_large'
     }
   ];
 
-  const initialState: IngredientsState = {
+  const initialState = {
     data: [],
     isLoading: false,
     error: null
   };
 
-  test.each([
-    {
-      description: 'pending → isLoading = true',
-      action: fetchIngredients.pending('req'),
-      expected: { isLoading: true }
-    },
-    {
-      description: 'fulfilled → данные записаны',
-      action: fetchIngredients.fulfilled(ingredients, 'req'),
-      expected: { isLoading: false, data: ingredients }
-    },
-    {
-      description: 'rejected → ошибка записана',
-      action: fetchIngredients.rejected(new Error('err'), 'req'),
-      expected: { isLoading: false, error: 'Ошибка загрузки' }
-    }
-  ])('$description', ({ action, expected }) => {
+  it('fetchIngredients.pending → isLoading = true', () => {
+    const action = fetchIngredients.pending('requestId');
     const state = reducer(initialState, action);
-    expect(state).toMatchObject(expected);
+
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it('fetchIngredients.fulfilled → данные записаны, isLoading = false', () => {
+    const action = fetchIngredients.fulfilled(mockIngredients, 'requestId');
+    const state = reducer(initialState, action);
+
+    expect(state.isLoading).toBe(false);
+    expect(state.data).toEqual(mockIngredients);
+    expect(state.error).toBeNull();
+  });
+
+  it('fetchIngredients.rejected → error записан, isLoading = false', () => {
+    const action = fetchIngredients.rejected(
+      new Error('Ошибка загрузки'),
+      'requestId'
+    );
+    const state = reducer(initialState, action);
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe('Ошибка загрузки');
   });
 });
